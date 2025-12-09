@@ -1,0 +1,145 @@
+@baseUrl = http://localhost:3000
+@testWallet = 0x742d35Cc6634C0532925a3b844Bc454e4438f44e
+
+###
+
+# 1. GET LEADERBOARD
+# No wallet required
+GET {{baseUrl}}/api/leaderboard?gameMode=sudoku&limit=10&offset=0
+
+###
+
+# 2. GET USER STATS
+# Requires wallet header
+GET {{baseUrl}}/api/user/stats
+x-wallet-address: {{testWallet}}
+
+###
+
+# 3. SUBMIT GAME RESULT
+# Requires wallet header
+POST {{baseUrl}}/api/games/submit
+x-wallet-address: {{testWallet}}
+Content-Type: application/json
+
+{
+  "gameMode": "sudoku",
+  "difficulty": "medium",
+  "timeTaken": 180,
+  "score": 1400,
+  "completed": true,
+  "hintsUsed": 2
+}
+
+###
+
+# 4. GET DAILY PUZZLE
+# No wallet required
+GET {{baseUrl}}/api/puzzles/daily?gameMode=sudoku&date=2025-12-09
+
+###
+
+# 5. GET USER PROFILE
+# Requires wallet header
+GET {{baseUrl}}/api/user/profile
+x-wallet-address: {{testWallet}}
+
+###
+
+# 5.1 UPDATE USER PROFILE
+# Requires wallet header
+PUT {{baseUrl}}/api/user/profile
+x-wallet-address: {{testWallet}}
+Content-Type: application/json
+
+{
+  "username": "PuzzleMaster2025",
+  "avatarUrl": "ipfs://QmExampleAvatar..."
+}
+
+###
+
+# Update username only
+PUT {{baseUrl}}/api/user/profile
+x-wallet-address: {{testWallet}}
+Content-Type: application/json
+
+{
+  "username": "SudokuChamp"
+}
+
+###
+
+# 6. SAVE GAME SESSION
+# Requires wallet header
+POST {{baseUrl}}/api/games/session
+x-wallet-address: {{testWallet}}
+Content-Type: application/json
+
+{
+  "gameMode": "crossword",
+  "puzzleId": "daily-crossword-2025-12-09",
+  "currentGrid": [
+    ["A", "B", "C"],
+    ["D", "E", "F"]
+  ],
+  "elapsedTime": 300,
+  "hintsUsed": 1
+}
+
+###
+
+# 7. LOAD GAME SESSION
+# Requires wallet header (replace SESSION_ID with actual session ID from save response)
+GET {{baseUrl}}/api/games/session/SESSION_ID
+x-wallet-address: {{testWallet}}
+
+###
+
+# 8. MINT NFT
+# Requires wallet header
+POST {{baseUrl}}/api/nfts/mint
+x-wallet-address: {{testWallet}}
+Content-Type: application/json
+
+{
+  "achievement": "StreakMaster",
+  "metadata": {
+    "name": "Streak Master Badge",
+    "description": "Awarded for maintaining a 10-game streak",
+    "image": "ipfs://QmExample..."
+  }
+}
+
+###
+
+# ADDITIONAL TEST CASES
+
+# Leaderboard - Crossword
+GET {{baseUrl}}/api/leaderboard?gameMode=crossword&limit=5&offset=0
+
+###
+
+# Daily Puzzle - Crossword
+GET {{baseUrl}}/api/puzzles/daily?gameMode=crossword
+
+###
+
+# Daily Puzzle - Today (no date specified)
+GET {{baseUrl}}/api/puzzles/daily?gameMode=sudoku
+
+###
+
+# Submit incomplete game
+POST {{baseUrl}}/api/games/submit
+x-wallet-address: {{testWallet}}
+Content-Type: application/json
+
+{
+  "gameMode": "sudoku",
+  "difficulty": "hard",
+  "timeTaken": 450,
+  "score": 800,
+  "completed": false,
+  "hintsUsed": 5
+}
