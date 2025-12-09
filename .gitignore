@@ -127,3 +127,6 @@ junit.xml
 
 # Turbo
 .turbo
+
+
+commit_all.ps1

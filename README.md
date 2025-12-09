@@ -57,8 +57,8 @@ pnpm install
 Create a `.env` file in the root directory:
 
 ```env
-# Database
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/based_puzzles?retryWrites=true&w=majority
+# Database - Get this from MongoDB Atlas
+MONGODB_URI=mongodb+srv://your-username:your-password@your-cluster.mongodb.net/based_puzzles?retryWrites=true&w=majority
 
 # Server
 PORT=3000
@@ -97,7 +97,7 @@ http://localhost:3000/api
 ### Authentication
 All protected endpoints require the `x-wallet-address` header:
 ```
-x-wallet-address: 0x742d35Cc6634C0532925a3b844Bc454e4438f44e
+x-wallet-address: 0x1234567890123456789012345678901234567890
 ```
 
 ---
@@ -422,7 +422,7 @@ This API uses **address-only wallet authentication** - no signatures or JWT toke
 curl "http://localhost:3000/api/leaderboard?gameMode=sudoku"
 
 # Get user stats (requires wallet)
-curl -H "x-wallet-address: 0x742d35Cc6634C0532925a3b844Bc454e4438f44e" \
+curl -H "x-wallet-address: 0x1234567890123456789012345678901234567890" \
      "http://localhost:3000/api/user/stats"
 ```
 
