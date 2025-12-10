@@ -1,4 +1,4 @@
-import { Request } from 'express';
+﻿import { Request } from 'express';
 
 export type GameMode = 'sudoku' | 'crossword';
 export type Difficulty = 'easy' | 'medium' | 'hard';
@@ -21,6 +21,8 @@ export interface IUser {
   averageScore: number;
   totalPlayTime: number;
   lastPlayed?: Date;
+  lastCompleted?: Date;
+  totalCompletions: number;
   achievements: string[];
 }
 
@@ -28,52 +30,42 @@ export interface IGame {
   walletAddress: string;
   gameMode: GameMode;
   difficulty: Difficulty;
-  timeTaken: number;
+  puzzleId: string;
   score: number;
+  timeTaken: number;
   completed: boolean;
   hintsUsed: number;
   playedAt: Date;
-  dailyId?: string;
-}
-
-export interface IDailyPuzzle {
-  gameMode: GameMode;
-  difficulty: Difficulty;
-  grid: any; // JSON
-  date: Date;
-  expiresAt: Date;
 }
 
 export interface ISession {
   walletAddress: string;
   gameMode: GameMode;
   puzzleId: string;
-  gridState: any; // JSON
+  currentGrid: any;
+  gridState: any;
   elapsedTime: number;
   hintsUsed: number;
+  isActive: boolean;
   createdAt: Date;
-  expiresAt: Date;
+  updatedAt: Date;
 }
 
 export interface INFT {
   walletAddress: string;
   tokenId: number;
-  contractAddress: string;
   achievementType: string;
+  txHash: string;
   mintedAt: Date;
-  metadata: any; // JSON
-}
-
-// DTOs
-export interface LeaderboardEntry {
-  rank: number;
-  walletAddress: string;
-  username?: string;
-  bestTime: number;
-  score: number;
-  gameMode: GameMode;
-  difficulty: Difficulty;
-  completedAt: string;
+  metadata: {
+    name: string;
+    description: string;
+    image: string;
+    attributes: Array<{
+      trait_type: string;
+      value: string | number;
+    }>;
+  };
 }
 
 export interface UserStats {
@@ -90,11 +82,40 @@ export interface UserStats {
   achievements: string[];
 }
 
+export interface NFTBadge {
+  id: string;
+  name: string;
+  image: string;
+  earnedAt: string;
+}
+
+export interface UserProfile {
+  walletAddress: string;
+  username?: string;
+  avatar?: string;
+  joinedAt: string;
+  stats?: UserStats;
+  nftBadges: NFTBadge[];
+  totalRewards?: number;
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  walletAddress: string;
+  username?: string;
+  bestTime: number;
+  score: number;
+  gameMode: GameMode;
+  difficulty: Difficulty;
+  completedAt: string;
+}
+
 export interface SubmitGameRequest {
   gameMode: GameMode;
   difficulty: Difficulty;
-  timeTaken: number;
+  puzzleId: string;
   score: number;
+  timeTaken: number;
   completed: boolean;
   hintsUsed: number;
 }
@@ -103,31 +124,6 @@ export interface SubmitGameResponse {
   newRank: number;
   newStreak: number;
   nftEarned?: string;
-}
-
-export interface DailyPuzzleResponse {
-  id: string;
-  gameMode: GameMode;
-  difficulty: Difficulty;
-  grid: any;
-  date: string;
-  expiresAt: string;
-}
-
-export interface UserProfile {
-  walletAddress: string;
-  username?: string;
-  avatar?: string;
-  joinedAt: string;
-  nftBadges: NFTBadge[];
-  totalRewards: number;
-}
-
-export interface NFTBadge {
-  id: string;
-  name: string;
-  image: string;
-  earnedAt: string;
 }
 
 export interface SaveSessionRequest {
@@ -146,7 +142,7 @@ export interface SaveSessionResponse {
 export interface LoadSessionResponse {
   gameMode: GameMode;
   puzzleId: string;
-  currentGrid: any;
+  gridState: any;
   elapsedTime: number;
   hintsUsed: number;
 }
@@ -165,4 +161,19 @@ export interface MintNFTResponse {
 export interface UpdateUserProfileRequest {
   username?: string;
   avatarUrl?: string;
+}
+
+export interface VerifySolutionRequest {
+  puzzleId: string;
+  solution: any;
+  timeTaken: number;
+  clientTimestamp: number;
+}
+
+export interface VerifySolutionResponse {
+  success: boolean;
+  rank: number;
+  newStreak: number;
+  rewards?: string[];
+  nftMinted: boolean;
 }
