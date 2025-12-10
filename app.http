@@ -143,3 +143,7 @@ Content-Type: application/json
   "completed": false,
   "hintsUsed": 5
 }
+
+###
+GET http://localhost:3000/api/puzzles/daily/sudoku?date=2025-12-09
+Content-Type: application/json
