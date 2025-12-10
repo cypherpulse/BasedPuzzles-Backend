@@ -152,7 +152,7 @@ export const loadSession = async (req: WalletRequest, res: Response): Promise<vo
     const response: LoadSessionResponse = {
       gameMode: session.gameMode,
       puzzleId: session.puzzleId,
-      currentGrid: session.gridState,
+      gridState: session.gridState,
       elapsedTime: session.elapsedTime,
       hintsUsed: session.hintsUsed
     };
