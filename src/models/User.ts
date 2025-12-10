@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+﻿import mongoose, { Schema, Document } from 'mongoose';
 import { IUser } from '../types';
 
 export interface IUserDocument extends IUser, Document {}
@@ -17,6 +17,8 @@ const UserSchema: Schema = new Schema({
   averageScore: { type: Number, default: 0 },
   totalPlayTime: { type: Number, default: 0 },
   lastPlayed: { type: Date },
+  lastCompleted: { type: Date },
+  totalCompletions: { type: Number, default: 0 },
   achievements: { type: [String], default: [] },
 });
 
