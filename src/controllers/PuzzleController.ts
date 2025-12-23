@@ -6,10 +6,10 @@ import { WalletRequest, VerifySolutionRequest, VerifySolutionResponse } from "..
 
 export const getDailyPuzzle = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { gameMode } = req.params;
+    const { gameMode } = req.query;
     const { date } = req.query;
 
-    if (!gameMode || !["sudoku", "crossword"].includes(gameMode)) {
+    if (!gameMode || !["sudoku", "crossword"].includes(gameMode as string)) {
       res.status(400).json({
         success: false,
         error: { code: "VALIDATION_ERROR", message: "Invalid gameMode" }
@@ -25,7 +25,7 @@ export const getDailyPuzzle = async (req: Request, res: Response): Promise<void>
 
     if (!puzzle) {
       // Create stub puzzle with solution (for demo purposes)
-      const stubData = createStubPuzzle(gameMode);
+      const stubData = createStubPuzzle(gameMode as string);
 
       const expiresAt = new Date(puzzleDate);
       expiresAt.setDate(expiresAt.getDate() + 1);
@@ -251,17 +251,54 @@ function createStubPuzzle(gameMode: string) {
       theme: undefined
     };
   } else {
-    // Crossword stub
+    // Crossword stub - 7x7 grid with sample layout
+    const grid = [
+      [1, '', '', '#', '', '', ''],
+      ['', '#', '', '', '', '#', ''],
+      ['', '', '', '#', '', '', ''],
+      ['#', '#', '#', '#', '#', '#', '#'],
+      ['', '', '', '#', '', '', ''],
+      ['', '#', '', '', '', '#', ''],
+      ['', '', '', '#', '', '', '']
+    ];
+
+    const solution = [
+      ['C', 'A', 'T', '#', 'D', 'O', 'G'],
+      ['A', '#', 'A', 'R', 'O', '#', 'O'],
+      ['T', 'A', 'B', '#', 'G', 'O', 'D'],
+      ['#', '#', '#', '#', '#', '#', '#'],
+      ['B', 'A', 'T', '#', 'H', 'E', 'N'],
+      ['I', '#', 'R', 'O', 'N', '#', 'S'],
+      ['G', 'B', 'I', '#', 'E', 'L', 'F']
+    ];
+
     return {
-      grid: {},
-      solution: {},
+      grid,
+      solution,
       clues: {
         across: [
-          { number: 1, clue: "Sample clue 1", startRow: 0, startCol: 0, length: 5 },
-          { number: 2, clue: "Sample clue 2", startRow: 1, startCol: 0, length: 4 }
+          { number: 1, clue: "Feline pet", startRow: 0, startCol: 0, length: 3 },
+          { number: 4, clue: "Man's best friend", startRow: 0, startCol: 4, length: 3 },
+          { number: 5, clue: "Bird of prey", startRow: 1, startCol: 2, length: 3 },
+          { number: 7, clue: "Deity", startRow: 1, startCol: 6, length: 1 },
+          { number: 8, clue: "Furniture piece", startRow: 2, startCol: 0, length: 3 },
+          { number: 10, clue: "Supreme being", startRow: 2, startCol: 4, length: 3 },
+          { number: 11, clue: "Flying mammal", startRow: 4, startCol: 0, length: 3 },
+          { number: 13, clue: "Farm bird", startRow: 4, startCol: 4, length: 3 },
+          { number: 14, clue: "Metal element", startRow: 5, startCol: 2, length: 3 },
+          { number: 16, clue: "Mythical creatures", startRow: 5, startCol: 6, length: 1 },
+          { number: 17, clue: "Large body of water", startRow: 6, startCol: 0, length: 3 },
+          { number: 19, clue: "Supernatural being", startRow: 6, startCol: 4, length: 3 }
         ],
         down: [
-          { number: 1, clue: "Sample down clue", startRow: 0, startCol: 0, length: 3 }
+          { number: 1, clue: "Alphabet letter", startRow: 0, startCol: 0, length: 3 },
+          { number: 2, clue: "Flying insect", startRow: 0, startCol: 1, length: 2 },
+          { number: 3, clue: "Egyptian river", startRow: 0, startCol: 2, length: 3 },
+          { number: 6, clue: "Preposition", startRow: 1, startCol: 4, length: 2 },
+          { number: 9, clue: "Pronoun", startRow: 2, startCol: 3, length: 1 },
+          { number: 12, clue: "Mammal", startRow: 4, startCol: 1, length: 2 },
+          { number: 15, clue: "Element symbol", startRow: 5, startCol: 3, length: 2 },
+          { number: 18, clue: "Body of water", startRow: 6, startCol: 1, length: 2 }
         ]
       },
       theme: "Sample Theme"
