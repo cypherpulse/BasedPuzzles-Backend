@@ -4,7 +4,7 @@ import { requireWallet } from '../middleware/auth';
 
 const router: Router = Router();
 
-router.get('/daily/:gameMode', getDailyPuzzle);
+router.get('/daily', getDailyPuzzle);
 router.post('/verify', requireWallet, verifySolution);
 
 export default router;
