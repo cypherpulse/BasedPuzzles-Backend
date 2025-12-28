@@ -30,6 +30,153 @@ A production-ready backend API for **Based Puzzles**, a Base mini app featuring 
 - **Validation**: Built-in request validation
 - **Development**: ESLint, Prettier, nodemon
 
+## 🏗 Architecture
+
+### System Overview
+```mermaid
+graph TB
+    A[Base Mini App Frontend] --> B[Based Puzzles Backend API]
+    B --> C[MongoDB Atlas]
+    B --> D[Base Blockchain]
+    B --> E[Wallet Authentication]
+
+    subgraph "Backend Services"
+        F[Express Server]
+        G[TypeScript Controllers]
+        H[Mongoose Models]
+        I[Middleware Layer]
+    end
+
+    F --> G
+    G --> H
+    I --> F
+```
+
+### Data Flow Architecture
+```mermaid
+sequenceDiagram
+    participant U as User (Wallet)
+    participant A as API Gateway
+    participant V as Validation Middleware
+    participant C as Controller
+    participant M as MongoDB
+    participant B as Base Blockchain
+
+    U->>A: Request with x-wallet-address
+    A->>V: Validate wallet address
+    V->>C: Process request
+    C->>M: Query/Update data
+    M-->>C: Return data
+    C-->>U: API Response
+
+    Note over C,B: NFT minting flow
+    C->>B: Mint achievement NFT
+    B-->>C: Transaction confirmation
+```
+
+### Database Schema
+```mermaid
+erDiagram
+    User ||--o{ Submission : submits
+    User ||--o{ Score : achieves
+    User ||--o{ Session : plays
+    User ||--o{ NFT : owns
+
+    Puzzle ||--o{ Submission : has
+    Puzzle ||--o{ Score : generates
+
+    User {
+        string walletAddress PK
+        string username
+        number totalGames
+        number wins
+        number currentStreak
+        number bestStreak
+        number bestTime
+        date createdAt
+        date updatedAt
+    }
+
+    Puzzle {
+        string id PK
+        string type "sudoku|crossword"
+        string difficulty "easy|medium|hard"
+        object grid
+        object solution
+        object clues
+        date expiresAt
+        date createdAt
+    }
+
+    Submission {
+        string id PK
+        string userId FK
+        string puzzleId FK
+        boolean isCorrect
+        number timeSpent
+        date submittedAt
+    }
+
+    Score {
+        string id PK
+        string userId FK
+        string puzzleId FK
+        number score
+        number timeSpent
+        string difficulty
+        date achievedAt
+    }
+
+    Session {
+        string id PK
+        string userId FK
+        string puzzleId FK
+        object currentState
+        boolean isCompleted
+        date startedAt
+        date lastUpdatedAt
+    }
+
+    NFT {
+        string id PK
+        string userId FK
+        string tokenId
+        string contractAddress
+        string achievementType
+        date mintedAt
+    }
+```
+
+### API Architecture
+```mermaid
+graph LR
+    subgraph "API Layers"
+        R[Routes] --> C[Controllers]
+        C --> S[Services]
+        S --> DB[(Database)]
+    end
+
+    subgraph "Route Groups"
+        R --> U[/user]
+        R --> P[/puzzle]
+        R --> G[/game]
+        R --> L[/leaderboard]
+        R --> N[/nft]
+    end
+
+    subgraph "Middleware"
+        Auth[Authentication]
+        Rate[Rate Limiting]
+        Valid[Validation]
+        Error[Error Handler]
+    end
+
+    Auth --> R
+    Rate --> R
+    Valid --> R
+    Error --> R
+```
+
 ## 📋 Prerequisites
 
 - Node.js 20.x or higher
