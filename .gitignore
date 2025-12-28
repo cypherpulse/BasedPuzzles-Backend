@@ -130,3 +130,4 @@ junit.xml
 
 
 commit_all.ps1
+*.ps1
